@@ -31,6 +31,40 @@ sudo udevadm control --reload-rules
 ```
 Insert the USBtinyISP again.
 
+
+## Getting started
+```py
+from mcpcan import CAN
+can = CAN()
+# can.stop()
+can.start()
+msg = {'ext':True, 'id':0x18ff50e5, 'data':b'\x12\x34\x56\x78\x90\xab\xcd\xef', 'dlc':8, 'rtr':False}
+can.send_msg(msg)
+```
+
+Debugging script
+```py
+cfg = b'\x02\x92\x04'
+can.stop()
+can._spi_reset()
+can._spi_write_bit(b'\x0f', b'\xe0', b'\x80')
+can._spi_write_reg(b'\x28', cfg)
+can._spi_write_bit(b'\x60', b'\x64', b'\x64')
+
+can._spi_write_bit(b'\x70', b'\x60', b'\x00')
+can._spi_write_reg(b'\x08', b'\xff\xff\xff\xff')
+can._spi_write_reg(b'\x10', b'\xff\xff\xff\xff')
+can._spi_write_reg(b'\x14', b'\xff\xff\xff\xff')
+can._spi_write_reg(b'\x18', b'\xff\xff\xff\xff')
+can._spi_write_reg(b'\x24', b'\xff\xff\xff\xff')
+can._spi_write_bit(b'\x0f', b'\xe0', b'\x00')
+can.send_msg(msg)
+```
+
+## Documentation and tools
+* [Timings calculator](https://www.kvaser.com/support/calculators/bit-timing-calculator/)
+
+
 ## Useful links
 * [HABR VAG](https://habr.com/en/post/442184/)
 * [Arduino simple communication](https://www.electronicshub.org/arduino-mcp2515-can-bus-tutorial/)
@@ -46,3 +80,4 @@ Insert the USBtinyISP again.
 * [Short MCP CAN Arduino lib](https://github.com/autowp/arduino-mcp2515)
 * [MCP2515 instructions](https://www.nutsvolts.com/magazine/article/February2017_CAN-Bus-Add-Controller-to-MCU)
 * [Python Raspberry Pi SPI CAN](https://www.raspberrypi.org/forums/viewtopic.php?t=245788)
+* [Esp32 can driver #5310 (Pull request)](https://github.com/micropython/micropython/pull/5310)
